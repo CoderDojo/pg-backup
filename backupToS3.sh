@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 : "${S3_BUCKET:?"No value supplied for s3 bucket name"}"
 
@@ -43,6 +44,7 @@ else
   echo "${S3_BUCKET} bucket exists"
 fi
 
-aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET"/
+aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET"
 sleep 30
 rm "$zipped_filename"
+exit 0
