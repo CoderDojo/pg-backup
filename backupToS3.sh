@@ -34,14 +34,13 @@ tar -zcvf "$zipped_filename" backup_dump/
 rm -rf backup_dump/
 echo "Completed Backup"
 
-bucket_count=$(aws s3 ls --region "$S3_REGION" s3://"$S3_BUCKET" | wc -l)
-if [[ bucket_count -gt 0 ]]; then
-  echo "${S3_BUCKET} bucket exists"
-else
+if aws s3 ls "s3://$S3_BUCKET" 2>&1 | grep -q 'NoSuchBucket'; then
   echo "${S3_BUCKET} bucket does not exist"
   echo "Create s3://${S3_BUCKET}"
   aws s3 mb --region "$S3_REGION" s3://"$S3_BUCKET"
   sleep 30
+else
+  echo "${S3_BUCKET} bucket exists"
 fi
 
 aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET"/
