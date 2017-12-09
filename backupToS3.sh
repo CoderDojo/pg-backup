@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -e
 
 : "${S3_BUCKET:?"No value supplied for s3 bucket name"}"
@@ -10,8 +11,7 @@ echo "Checking Credentials before starting backup"
 : "${PGUSER:?"Need to set PGUSER non-empty?"}"
 : "${PGPASSWORD:?"Need to set PGPASSWORD non-empty?"}"
 
-if [ ! -e ~/.aws/credentials ]
-then
+if [ ! -e ~/.aws/credentials ]; then
   echo "AWS credentials file not found." >&2
   : "${AWS_ACCESS_KEY_ID:?"Need to set AWS_ACCESS_KEY_ID non-empty?"}"
   : "${AWS_SECRET_ACCESS_KEY:?"Need to set AWS_SECRET_ACCESS_KEY non-empty?"}"
@@ -22,7 +22,7 @@ args=("$@")
 dump_command="pg_dump -j 12 -Fd -f backup_dump ${args[*]} '${PGDATABASE}' --verbose"
 echo "Starting ${dump_command}"
 eval "$dump_command"
-if [ "$(ls -A backup_dump)" ] ; then
+if [ "$(ls -A backup_dump)" ]; then
   echo "PGDUMP Complete"
 else
   echo "PGDUMP failed"
@@ -40,8 +40,6 @@ if aws s3 ls "s3://$S3_BUCKET" 2>&1 | grep -q 'NoSuchBucket'; then
   echo "Create s3://${S3_BUCKET}"
   aws s3 mb --region "$S3_REGION" s3://"$S3_BUCKET"
   sleep 30
-else
-  echo "${S3_BUCKET} bucket exists"
 fi
 
 aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET"
