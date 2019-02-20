@@ -19,7 +19,7 @@ fi
 
 mkdir backup_dump
 args=("$@")
-dump_command="pg_dump -j 12 -Fd -f backup_dump ${args[*]} '${PGDATABASE}' --verbose"
+dump_command="pg_dump -Fd -f backup_dump ${args[*]} '${PGDATABASE}' --verbose"
 echo "Starting ${dump_command}"
 eval "$dump_command"
 if [ "$(ls -A backup_dump)" ]; then

@@ -16,3 +16,9 @@ docker run --rm \
   -e S3_BUCKET="" \
   CoderDojo/pg-backup
 ```
+
+## Build
+docker build . --tag=coderdojo/pg-backup
+
+## Push
+docker push coderdojo/pg-backup
