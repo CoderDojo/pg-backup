@@ -30,6 +30,7 @@ else
 fi
 
 now=$(date +%d-%m-%Y-%H-%M-%S)
+today=$(date +%u)
 zipped_filename="$PGDATABASE-$now.tar.gz"
 tar -zcvf "$zipped_filename" backup_dump/
 rm -rf backup_dump/
@@ -42,7 +43,10 @@ if aws s3 ls "s3://$S3_BUCKET" 2>&1 | grep -q 'NoSuchBucket'; then
   sleep 30
 fi
 
-aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET"
+aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET/daily/"
+if [ "$today" == "7" ]; then
+  aws s3 cp --region "$S3_REGION" "$zipped_filename" s3://"$S3_BUCKET/weekly/"
+fi
 sleep 30
 rm "$zipped_filename"
 exit 0
